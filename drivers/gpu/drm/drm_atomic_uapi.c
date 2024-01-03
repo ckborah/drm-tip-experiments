@@ -708,6 +708,9 @@ static int drm_atomic_color_set_data_property(struct drm_colorop *colorop,
 	case DRM_COLOROP_CTM_3X4:
 		size = sizeof(struct drm_color_ctm_3x4);
 		break;
+	case DRM_COLOROP_CTM_3X3:
+		size = sizeof(struct drm_color_ctm);
+		break;
 	case DRM_COLOROP_3D_LUT:
 		index = state->lut_3d_mode_index;
 		if (index >= (state->lut_3d_modes->length / sizeof(struct drm_mode_3dlut_mode)))
