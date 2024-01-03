@@ -258,6 +258,8 @@ int drm_colorop_curve_1d_init(struct drm_device *dev, struct drm_colorop *coloro
 			      struct drm_plane *plane, u64 supported_tfs);
 int drm_colorop_curve_1d_lut_init(struct drm_device *dev, struct drm_colorop *colorop,
 				  struct drm_plane *plane, uint32_t lut_size);
+int drm_colorop_ctm_3x3_init(struct drm_device *dev, struct drm_colorop *colorop,
+			     struct drm_plane *plane);
 int drm_colorop_ctm_3x4_init(struct drm_device *dev, struct drm_colorop *colorop,
 			     struct drm_plane *plane);
 int drm_colorop_mult_init(struct drm_device *dev, struct drm_colorop *colorop,
