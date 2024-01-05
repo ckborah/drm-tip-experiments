@@ -50,6 +50,29 @@ static inline u32 drm_color_lut_extract(u32 user_input, int bit_precision)
 					 (1 << 16) - 1);
 }
 
+/* TODO: Add uapi documentation
+ * Added to accommodate enhanced LUT precision.
+ * Max LUT precision is 32 bits.
+ */
+static inline u64 drm_color_lut_extract_ext(u64 user_input, u32 bit_precision)
+{
+	u64 val = user_input & 0xffffffff;
+	u32 max;
+
+	if (bit_precision > 32)
+		return 0;
+
+	max = 0xffffffff >> (32 - bit_precision);
+	/* Round only if we're not using full precision. */
+	if (bit_precision < 32) {
+		val += 1UL << (32 - bit_precision - 1);
+		val >>= 32 - bit_precision;
+	}
+
+	return ((user_input & 0xffffffff00000000) |
+		clamp_val(val, 0, max));
+}
+
 u64 drm_color_ctm_s31_32_to_qm_n(u64 user_input, u32 m, u32 n);
 
 void drm_crtc_enable_color_mgmt(struct drm_crtc *crtc,
@@ -70,6 +93,18 @@ int drm_mode_crtc_set_gamma_size(struct drm_crtc *crtc,
 static inline int drm_color_lut_size(const struct drm_property_blob *blob)
 {
 	return blob->length / sizeof(struct drm_color_lut);
+}
+
+/**
+ * drm_color_lut_ext_size - calculate the number of entries in the extended LUT
+ * @blob: blob containing the LUT
+ *
+ * Returns:
+ * The number of entries in the color LUT stored in @blob.
+ */
+static inline int drm_color_lut_ext_size(const struct drm_property_blob *blob)
+{
+	return blob->length / sizeof(struct drm_color_lut_ext);
 }
 
 enum drm_color_encoding {
@@ -118,4 +153,5 @@ enum drm_color_lut_tests {
 };
 
 int drm_color_lut_check(const struct drm_property_blob *lut, u32 tests);
+int drm_color_lut_ext_check(const struct drm_property_blob *lut, u32 tests);
 #endif
