@@ -1458,6 +1458,8 @@ icl_plane_update_noarm(struct intel_dsb *dsb,
 
 	intel_program_pipeline(&plane_state->uapi, &plane_color_ctl);
 
+	pr_alert("Exodus: plane_color_ctl %x", plane_color_ctl);
+
 	/* The scaler will handle the output position */
 	if (plane_state->scaler_id >= 0) {
 		crtc_x = 0;
