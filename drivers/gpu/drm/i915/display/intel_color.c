@@ -3811,6 +3811,10 @@ static void xelpd_load_plane_csc_matrix(const struct drm_plane_state *state,
 	ctm = blob->data;
 	input = ctm->matrix;
 
+	for (i = 0; i < ARRAY_SIZE(ctm->matrix); i++) {
+		pr_alert("Exodus: CTM[%d] = 0x%08llx\n",i, input[i]);
+	}
+
 	/*
 	 * Convert fixed point S31.32 input to format supported by the
 	 * hardware.
@@ -3899,6 +3903,8 @@ static void xelpd_program_plane_pre_csc_lut(const struct drm_plane_state *state,
 			for (i = 0; i < lut_size; i++) {
 				u32 lut_val = (pre_csc_lut[i].green & 0xffffff);
 
+				pr_alert("Exodus: Degamma LUT[%d] = %x reg %x",i, lut_val, (unsigned int)PLANE_PRE_CSC_GAMC_DATA_ENH(pipe, plane, 0).reg);
+
 				intel_de_write_fw(dev_priv,
 						  PLANE_PRE_CSC_GAMC_DATA_ENH(pipe, plane, 0),
 						  lut_val);
@@ -3906,14 +3912,17 @@ static void xelpd_program_plane_pre_csc_lut(const struct drm_plane_state *state,
 
 			/* Program the max register to clamp values > 1.0. */
 			/* ToDo: Restrict to 0x7ffffff*/
-			while (i < 131)
+			while (i < 131) {
+				pr_alert("Exodus: Degamma LUT[%d] = %x",i, pre_csc_lut[i].green);
 				intel_de_write_fw(dev_priv,
 						  PLANE_PRE_CSC_GAMC_DATA_ENH(pipe, plane, 0),
 						  pre_csc_lut[i++].green);
+			}
 		} else {
 			for (i = 0; i < lut_size; i++) {
 				u32 v = (i * ((1 << 24) - 1)) / (lut_size - 1);
 
+				pr_alert("Exodus: Degamma LUT[%d] = %x",i, v);
 				intel_de_write_fw(dev_priv,
 						  PLANE_PRE_CSC_GAMC_DATA_ENH(pipe, plane, 0), v);
 			}
@@ -3939,13 +3948,17 @@ static void xelpd_program_plane_pre_csc_lut(const struct drm_plane_state *state,
 				  offset | PLANE_PAL_PREC_AUTO_INCREMENT);
 
 		if (pre_csc_lut) {
-			for (i = 0; i < lut_size; i++)
+			for (i = 0; i < lut_size; i++) {
+				pr_alert("Exodus: Degamma LUT[%d] = %x",i, pre_csc_lut[i].green);
 				intel_de_write_fw(dev_priv, PLANE_PRE_CSC_GAMC_DATA(pipe, plane, 0),
 						  pre_csc_lut[i].green);
+			}
 			/* Program the max register to clamp values > 1.0. */
-			while (i < 35)
+			while (i < 35) {
+				pr_alert("Exodus: Degamma LUT[%d] = %x",i, pre_csc_lut[i].green);
 				intel_de_write_fw(dev_priv, PLANE_PRE_CSC_GAMC_DATA(pipe, plane, 0),
 						  pre_csc_lut[i++].green);
+			}
 		} else {
 			for (i = 0; i < lut_size; i++) {
 				u32 v = (i * ((1 << 16) - 1)) / (lut_size - 1);
@@ -3984,6 +3997,7 @@ static void xelpd_program_plane_post_csc_lut(const struct drm_plane_state *state
 			for (i = 0, j = 0; i < 9; i++, j++) {
 				u32 lut_val = (post_csc_lut[j].green & 0xffffff);
 
+				pr_alert("Exodus: Super fine Gamma LUT[%d] = %x",j, lut_val);
 				intel_de_write_fw(dev_priv,
 						  PLANE_POST_CSC_GAMC_SEG0_DATA_ENH(pipe, plane, 0),
 						  lut_val);
@@ -4001,6 +4015,7 @@ static void xelpd_program_plane_post_csc_lut(const struct drm_plane_state *state
 				else
 					lut_val = (post_csc_lut[j++].green & 0xffffff);
 
+				pr_alert("Exodus: Gamma LUT[%d] = %x",i, lut_val);
 				intel_de_write_fw(dev_priv,
 						  PLANE_POST_CSC_GAMC_DATA_ENH(pipe, plane, 0),
 						  lut_val);
@@ -4008,6 +4023,7 @@ static void xelpd_program_plane_post_csc_lut(const struct drm_plane_state *state
 
 			/* Segment 2 */
 			do {
+				pr_alert("Exodus: Integer Gamma LUT[%d] = %x",j, post_csc_lut[j].green);
 				/* Program the max register to clamp values > 1.0. TODO: clamp values at 7 */
 				intel_de_write_fw(dev_priv,
 						  PLANE_POST_CSC_GAMC_DATA_ENH(pipe, plane, 0),
@@ -4044,15 +4060,19 @@ static void xelpd_program_plane_post_csc_lut(const struct drm_plane_state *state
 				  offset | PLANE_PAL_PREC_AUTO_INCREMENT);
 
 		if (post_csc_lut) {
-			for (i = 0; i < lut_size; i++)
+			for (i = 0; i < lut_size; i++) {
+				pr_alert("Exodus: Gamma LUT[%d] = %x",i, post_csc_lut[i].green & 0xffff);
 				intel_de_write_fw(dev_priv,
 						  PLANE_POST_CSC_GAMC_DATA(pipe, plane, 0),
 						  post_csc_lut[i].green & 0xffff);
+			}
 			/* Program the max register to clamp values > 1.0. */
-			while (i < 35)
+			while (i < 35) {
+				pr_alert("Exodus: Gamma LUT[%d] = %x",i, post_csc_lut[i].green & 0x3ffff);
 				intel_de_write_fw(dev_priv,
 						  PLANE_POST_CSC_GAMC_DATA(pipe, plane, 0),
 						  post_csc_lut[i++].green & 0x3ffff);
+			}
 		} else {
 			for (i = 0; i < lut_size; i++) {
 				u32 v = (i * ((1 << 16) - 1)) / (lut_size - 1);
