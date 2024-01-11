@@ -3710,6 +3710,10 @@ static void xelpd_load_plane_csc_matrix(const struct drm_plane_state *state,
 	ctm = blob->data;
 	input = ctm->matrix;
 
+	for (i = 0; i < ARRAY_SIZE(ctm->matrix); i++) {
+		pr_alert("Exodus: CTM[%d] = 0x%08llx\n",i, input[i]);
+	}
+
 	/*
 	 * Convert fixed point S31.32 input to format supported by the
 	 * hardware.
@@ -3799,6 +3803,8 @@ static void xelpd_program_plane_pre_csc_lut(const struct drm_plane_state *state,
 				u64 word = drm_color_lut_extract_ext(pre_csc_lut[i].green, 24);
 				u32 lut_val = (word & 0xffffff);
 
+				pr_alert("Exodus: Degamma LUT[%d] = %x",i, lut_val);
+
 				intel_de_write_fw(dev_priv,
 						  PLANE_PRE_CSC_GAMC_DATA_ENH(pipe, plane, 0),
 						  lut_val);
@@ -3838,13 +3844,17 @@ static void xelpd_program_plane_pre_csc_lut(const struct drm_plane_state *state,
 				  offset | PLANE_PAL_PREC_AUTO_INCREMENT);
 
 		if (pre_csc_lut) {
-			for (i = 0; i < lut_size; i++)
+			for (i = 0; i < lut_size; i++) {
+				pr_alert("Exodus: Degamma LUT[%d] = %llx",i, pre_csc_lut[i].green);
 				intel_de_write_fw(dev_priv, PLANE_PRE_CSC_GAMC_DATA(pipe, plane, 0),
 						  pre_csc_lut[i].green);
+			}
 			/* Program the max register to clamp values > 1.0. */
-			while (i < 35)
+			while (i < 35) {
+				pr_alert("Exodus: Degamma LUT[%d] = %llx",i, pre_csc_lut[i].green);
 				intel_de_write_fw(dev_priv, PLANE_PRE_CSC_GAMC_DATA(pipe, plane, 0),
 						  pre_csc_lut[i++].green);
+			}
 		} else {
 			for (i = 0; i < lut_size; i++) {
 				u32 v = (i * ((1 << 16) - 1)) / (lut_size - 1);
@@ -3881,6 +3891,7 @@ static void xelpd_program_plane_post_csc_lut(const struct drm_plane_state *state
 				u64 word = drm_color_lut_extract_ext(post_csc_lut[i].green, 24);
 				u32 lut_val = (word & 0xffffff);
 
+				pr_alert("Exodus: Gamma LUT[%d] = %x",i, lut_val);
 				intel_de_write_fw(dev_priv,
 						  PLANE_POST_CSC_GAMC_DATA_ENH(pipe, plane, 0),
 						  lut_val);
@@ -3921,15 +3932,19 @@ static void xelpd_program_plane_post_csc_lut(const struct drm_plane_state *state
 				  offset | PLANE_PAL_PREC_AUTO_INCREMENT);
 
 		if (post_csc_lut) {
-			for (i = 0; i < lut_size; i++)
+			for (i = 0; i < lut_size; i++) {
+				pr_alert("Exodus: Gamma LUT[%d] = %llx",i, post_csc_lut[i].green & 0xffff);
 				intel_de_write_fw(dev_priv,
 						  PLANE_POST_CSC_GAMC_DATA(pipe, plane, 0),
 						  post_csc_lut[i].green & 0xffff);
+			}
 			/* Program the max register to clamp values > 1.0. */
-			while (i < 35)
+			while (i < 35) {
+				pr_alert("Exodus: Gamma LUT[%d] = %llx",i, post_csc_lut[i].green & 0x3ffff);
 				intel_de_write_fw(dev_priv,
 						  PLANE_POST_CSC_GAMC_DATA(pipe, plane, 0),
 						  post_csc_lut[i++].green & 0x3ffff);
+			}
 		} else {
 			for (i = 0; i < lut_size; i++) {
 				u32 v = (i * ((1 << 16) - 1)) / (lut_size - 1);
