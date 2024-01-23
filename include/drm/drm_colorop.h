@@ -138,6 +138,11 @@ struct drm_colorop_state {
 	 * Number of entries of the custom LUT. This should be read-only.
 	 */
 	uint32_t size;
+	/**
+	 * @hw_caps:
+	 *
+	 */
+	struct drm_property_blob *hw_caps;
 
 	/**
 	 * @lut_3d_modes:
@@ -282,6 +287,13 @@ struct drm_colorop {
 	 * Sub-type for DRM_COLOROP_1D_CURVE type.
 	 */
 	struct drm_property *curve_1d_type_property;
+ 
+	/**
+	 * @hwlut_caps_property:
+	 *
+	 * Property to expose hardware lut capbilities.
+	 */
+	struct drm_property *hw_caps_property;
 
 	/**
 	 * @multiplier_property:
