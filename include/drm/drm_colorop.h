@@ -77,6 +77,11 @@ struct drm_colorop_state {
 	 * Number of entries of the custom LUT. This should be read-only.
 	 */
 	uint32_t size;
+	/**
+	 * @hw_caps:
+	 *
+	 */
+	struct drm_property_blob *hw_caps;
 
 	/**
 	 * @data:
@@ -185,6 +190,13 @@ struct drm_colorop {
 	 * HW constraints.
 	 */
 	struct drm_property *bypass_property;
+
+	/**
+	 * @hwlut_caps_property:
+	 *
+	 * Property to expose hardware lut capbilities.
+	 */
+	struct drm_property *hw_caps_property;
 
 	/**
 	 * @curve_1d_type:
