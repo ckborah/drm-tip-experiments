@@ -76,6 +76,8 @@ static inline u32 dfixed_div(fixed20_12 A, fixed20_12 B)
 #define DRM_FIXED_DIGITS_MASK	(~DRM_FIXED_DECIMAL_MASK)
 #define DRM_FIXED_EPSILON	1LL
 #define DRM_FIXED_ALMOST_ONE	(DRM_FIXED_ONE - DRM_FIXED_EPSILON)
+#define DRM_FIXED_FRACTIONAL	0xffffffffll
+#define DRM_FIXED_HALF		0x80000000ll
 
 /**
  * @drm_sm2fixp
@@ -105,17 +107,20 @@ static inline int drm_fixp2int(s64 a)
 	return ((s64)a) >> DRM_FIXED_POINT;
 }
 
-static inline int drm_fixp2int_round(s64 a)
-{
-	return drm_fixp2int(a + DRM_FIXED_ONE / 2);
-}
-
 static inline int drm_fixp2int_ceil(s64 a)
 {
 	if (a >= 0)
 		return drm_fixp2int(a + DRM_FIXED_ALMOST_ONE);
 	else
 		return drm_fixp2int(a - DRM_FIXED_ALMOST_ONE);
+}
+
+static inline int drm_fixp2int_round(s64 a)
+{
+	if ((a & DRM_FIXED_FRACTIONAL) < DRM_FIXED_HALF)
+		return drm_fixp2int(a);
+	else
+		return drm_fixp2int_ceil(a);
 }
 
 static inline unsigned drm_fixp_msbset(s64 a)
