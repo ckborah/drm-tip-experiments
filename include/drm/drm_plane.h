@@ -767,6 +767,14 @@ struct drm_plane {
 	struct drm_property *color_range_property;
 
 	/**
+	 * @color_pipeline_property:
+	 *
+	 * Optional "COLOR_PIPELINE" enum property for specifying
+	 * a color pipeline to use on the plane.
+	 */
+	struct drm_property *color_pipeline_property;
+
+	/**
 	 * @scaling_filter_property: property to apply a particular filter while
 	 * scaling.
 	 */
@@ -979,4 +987,7 @@ drm_plane_get_damage_clips(const struct drm_plane_state *state);
 int drm_plane_create_scaling_filter_property(struct drm_plane *plane,
 					     unsigned int supported_filters);
 
+int drm_plane_create_color_pipeline_property(struct drm_plane *plane,
+					     struct drm_prop_enum_list *pipelines,
+					     int num_pipelines);
 #endif
