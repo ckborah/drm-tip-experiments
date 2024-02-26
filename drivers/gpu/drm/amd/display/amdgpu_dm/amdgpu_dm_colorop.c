@@ -29,6 +29,7 @@
 #include <drm/drm_property.h>
 #include <drm/drm_colorop.h>
 
+#include "amdgpu.h"
 #include "amdgpu_dm_colorop.h"
 
 const u64 amdgpu_dm_supported_degam_tfs =
@@ -45,6 +46,30 @@ const u64 amdgpu_dm_supported_blnd_tfs =
 	BIT(DRM_COLOROP_1D_CURVE_SRGB_EOTF) |
 	BIT(DRM_COLOROP_1D_CURVE_PQ_125_EOTF) |
 	BIT(DRM_COLOROP_1D_CURVE_BT2020_INV_OETF);
+
+const struct drm_color_lut_range amdgpu_shaper_lut_range[] = {
+	/* segment 1 */
+	{
+		.flags = (DRM_MODE_LUT_INTERPOLATE |
+				DRM_MODE_LUT_NON_DECREASING),
+		.count = 4096,
+		.input_bpc = 24, .output_bpc = 16,
+		.start = 0, .end = (1 << 16) - 1,
+		.min = 0, .max = (1 << 16) - 1,
+	},
+};
+
+const struct drm_color_lut_range amdgpu_blend_lut_range[] = {
+	/* segment 1 */
+	{
+		.flags = (DRM_MODE_LUT_INTERPOLATE |
+				DRM_MODE_LUT_NON_DECREASING),
+		.count = 4096,
+		.input_bpc = 24, .output_bpc = 16,
+		.start = 0, .end = (1 << 16) - 1,
+		.min = 0, .max = (1 << 16) - 1,
+	},
+};
 
 int amdgpu_dm_initialize_default_pipeline(struct drm_plane *plane, struct drm_prop_enum_list *list)
 {
@@ -83,6 +108,22 @@ int amdgpu_dm_initialize_default_pipeline(struct drm_plane *plane, struct drm_pr
 
 	prev_op = op;
 
+	/* 1D LUT - SHAPER LUT */
+	op = kzalloc(sizeof(struct drm_colorop), GFP_KERNEL);
+	if (!op) {
+		DRM_ERROR("KMS: Failed to allocate colorop\n");
+		return -ENOMEM;
+	}
+
+	ret = drm_colorop_curve_1d_lut_init(dev, op, plane, amdgpu_shaper_lut_range,
+					    sizeof(amdgpu_shaper_lut_range));
+	if (ret)
+		return ret;
+
+	drm_colorop_set_next_property(prev_op, op);
+
+	prev_op = op;
+
 	/* 1D curve - BLND TF */
 	op = kzalloc(sizeof(struct drm_colorop), GFP_KERNEL);
 	if (!op) {
@@ -96,5 +137,20 @@ int amdgpu_dm_initialize_default_pipeline(struct drm_plane *plane, struct drm_pr
 
 	drm_colorop_set_next_property(prev_op, op);
 
+	prev_op = op;
+
+	/* 1D LUT - BLND LUT */
+	op = kzalloc(sizeof(struct drm_colorop), GFP_KERNEL);
+	if (!op) {
+		DRM_ERROR("KMS: Failed to allocate colorop\n");
+		return -ENOMEM;
+	}
+
+	ret = drm_colorop_curve_1d_lut_init(dev, op, plane, amdgpu_blend_lut_range,
+					    sizeof(amdgpu_blend_lut_range));
+	if (ret)
+		return ret;
+
+	drm_colorop_set_next_property(prev_op, op);
 	return 0;
 }

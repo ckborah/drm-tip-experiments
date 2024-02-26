@@ -27,6 +27,8 @@
 #ifndef __AMDGPU_DM_COLOROP_H__
 #define __AMDGPU_DM_COLOROP_H__
 
+extern const struct drm_color_lut_range amdgpu_shaper_lut_range[];
+extern const struct drm_color_lut_range amdgpu_blend_lut_range[];
 extern const u64 amdgpu_dm_supported_degam_tfs;
 extern const u64 amdgpu_dm_supported_shaper_tfs;
 extern const u64 amdgpu_dm_supported_blnd_tfs;
