@@ -65,6 +65,13 @@ struct drm_colorop_state {
 	enum drm_colorop_curve_1d_type curve_1d_type;
 
 	/**
+	 * @multiplier:
+	 *
+	 * Multiplier to 'gain' the plane. Format is S31.32 sign-magnitude.
+	 */
+	uint64_t multiplier;
+
+	/**
 	 * @hw_caps:
 	 *
 	 */
@@ -186,6 +193,13 @@ struct drm_colorop {
 	struct drm_property *hw_caps_property;
 
 	/**
+	 * @multiplier_property:
+	 *
+	 * Multiplier property for plane gain
+	 */
+	struct drm_property *multiplier_property;
+
+	/**
 	 * @curve_1d_type:
 	 *
 	 * Sub-type for DRM_COLOROP_1D_CURVE type.
@@ -246,6 +260,8 @@ int drm_colorop_curve_1d_lut_init(struct drm_device *dev, struct drm_colorop *co
 				  size_t length);
 int drm_colorop_ctm_3x4_init(struct drm_device *dev, struct drm_colorop *colorop,
 			     struct drm_plane *plane);
+int drm_colorop_mult_init(struct drm_device *dev, struct drm_colorop *colorop,
+			      struct drm_plane *plane);
 
 struct drm_colorop_state *
 drm_atomic_helper_colorop_duplicate_state(struct drm_colorop *colorop);
