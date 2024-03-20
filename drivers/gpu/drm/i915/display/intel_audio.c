@@ -428,6 +428,10 @@ hsw_dp_audio_config_update(struct intel_encoder *encoder,
 	}
 
 	intel_de_write(i915, HSW_AUD_M_CTS_ENABLE(cpu_transcoder), tmp);
+
+	u32 m_cts;
+        m_cts = intel_de_read(i915, AUD_M_CTS(cpu_transcoder));
+	drm_dbg_kms(&i915->drm, "AUD_M_CTS(%u) %08x\n", cpu_transcoder, m_cts);
 }
 
 static void
@@ -1085,6 +1089,13 @@ static unsigned long i915_audio_component_get_power(struct device *kdev)
 		if (DISPLAY_VER(i915) >= 10)
 			intel_de_rmw(i915, AUD_PIN_BUF_CTL,
 				     0, AUD_PIN_BUF_ENABLE);
+	}
+
+	for (int n = 0; n < 3; n++) {
+		u32 m_cts;
+		m_cts = intel_de_read(i915, AUD_M_CTS(n));
+		drm_dbg_kms(&i915->drm, "AUD_M_CTS(%u) %08x\n", n, m_cts);
+
 	}
 
 	return ret;
