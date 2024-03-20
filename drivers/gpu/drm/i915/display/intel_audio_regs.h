@@ -116,6 +116,10 @@
 #define   AUDIO_CP_READY(trans)		((1 << 1) << ((trans) * 4))
 #define   AUDIO_ELD_VALID(trans)	((1 << 0) << ((trans) * 4))
 
+#define _AUD_TCA_M_CTS			0x65f44
+#define _AUD_TCB_M_CTS			0x65f54
+#define AUD_M_CTS(trans)		_MMIO_TRANS(trans, _AUD_TCA_M_CTS, _AUD_TCB_M_CTS)
+
 #define _AUD_TCA_DP_2DOT0_CTRL		0x650bc
 #define _AUD_TCB_DP_2DOT0_CTRL		0x651bc
 #define AUD_DP_2DOT0_CTRL(trans)	_MMIO_TRANS(trans, _AUD_TCA_DP_2DOT0_CTRL, _AUD_TCB_DP_2DOT0_CTRL)
