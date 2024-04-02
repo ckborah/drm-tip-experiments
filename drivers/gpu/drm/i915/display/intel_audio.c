@@ -416,19 +416,6 @@ hsw_dp_audio_config_update(struct intel_encoder *encoder,
 
 	intel_de_write(i915, HSW_AUD_CFG(cpu_transcoder), tmp);
 
-	tmp = intel_de_read(i915, HSW_AUD_M_CTS_ENABLE(cpu_transcoder));
-	tmp &= ~AUD_CONFIG_M_MASK;
-	tmp &= ~AUD_M_CTS_M_VALUE_INDEX;
-	tmp &= ~AUD_M_CTS_M_PROG_ENABLE;
-
-	if (nm) {
-		tmp |= nm->m;
-		tmp |= AUD_M_CTS_M_VALUE_INDEX;
-		tmp |= AUD_M_CTS_M_PROG_ENABLE;
-	}
-
-	intel_de_write(i915, HSW_AUD_M_CTS_ENABLE(cpu_transcoder), tmp);
-
 	u32 m_cts;
         m_cts = intel_de_read(i915, AUD_M_CTS(cpu_transcoder));
 	drm_dbg_kms(&i915->drm, "AUD_M_CTS(%u) %08x\n", cpu_transcoder, m_cts);
