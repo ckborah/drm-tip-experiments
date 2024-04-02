@@ -416,17 +416,13 @@ hsw_dp_audio_config_update(struct intel_encoder *encoder,
 
 	intel_de_write(i915, HSW_AUD_CFG(cpu_transcoder), tmp);
 
+	/*
+	 * Let's disable "Enable CTS or M Prog bit"
+	 * and let HW calculate the value
+	 */
 	tmp = intel_de_read(i915, HSW_AUD_M_CTS_ENABLE(cpu_transcoder));
-	tmp &= ~AUD_CONFIG_M_MASK;
-	tmp &= ~AUD_M_CTS_M_VALUE_INDEX;
 	tmp &= ~AUD_M_CTS_M_PROG_ENABLE;
-
-	if (nm) {
-		tmp |= nm->m;
-		tmp |= AUD_M_CTS_M_VALUE_INDEX;
-		tmp |= AUD_M_CTS_M_PROG_ENABLE;
-	}
-
+	tmp &= ~AUD_M_CTS_M_VALUE_INDEX;
 	intel_de_write(i915, HSW_AUD_M_CTS_ENABLE(cpu_transcoder), tmp);
 
 	u32 m_cts;
