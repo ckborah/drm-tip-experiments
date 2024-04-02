@@ -23,6 +23,7 @@
 
 #include <linux/component.h>
 #include <linux/kernel.h>
+#include <linux/delay.h>
 
 #include <drm/drm_edid.h>
 #include <drm/drm_eld.h>
@@ -1238,6 +1239,8 @@ static int i915_audio_component_get_eld(struct device *kdev, int port,
 	struct drm_i915_private *i915 = kdev_to_i915(kdev);
 	const struct intel_audio_state *audio_state;
 	int ret = 0;
+
+	mdelay(600);
 
 	mutex_lock(&i915->display.audio.mutex);
 
