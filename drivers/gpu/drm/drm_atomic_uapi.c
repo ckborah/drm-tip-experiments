@@ -720,6 +720,9 @@ static int drm_atomic_color_set_data_property(struct drm_colorop *colorop,
 		size = modes[index].lut_stride[0] * modes[index].lut_stride[1] * modes[index].lut_stride[2] *
 		       sizeof(struct drm_color_lut);
 		break;
+	case DRM_COLOROP_1D_LUT_MULTSEG:
+		elem_size = sizeof(struct drm_color_lut_ext);
+		break;
 	default:
 		/* should never get here */
 		return -EINVAL;
