@@ -34,7 +34,8 @@
 
 static const struct drm_prop_enum_list drm_colorop_type_enum_list[] = {
 	{ DRM_COLOROP_1D_CURVE, "1D Curve" },
-	{ DRM_COLOROP_CTM_3X4, "3x4 Matrix"}
+	{ DRM_COLOROP_CTM_3X4, "3x4 Matrix"},
+	{ DRM_COLOROP_1D_LUT, "1D Curve Custom LUT" }
 };
 
 static const char * const colorop_curve_1d_type_names[] = {
@@ -77,7 +78,7 @@ static int drm_colorop_lutcaps_init(struct drm_colorop *colorop,
 	struct drm_device *dev = plane->dev;
 	struct drm_property_blob *blob;
 
-	/* Create Color Caps property for multi-segmented 1D LUT */
+	/* Create Color Caps property for 1D LUT */
 	if (colorop->type != DRM_COLOROP_1D_LUT)
 		return -EINVAL;
 
@@ -223,6 +224,29 @@ static int drm_colorop_create_data_prop(struct drm_device *dev, struct drm_color
 	return 0;
 }
 
+int drm_colorop_curve_1d_lut_init(struct drm_device *dev, struct drm_colorop *colorop,
+				  struct drm_plane *plane, const struct drm_color_lut_range *ranges,
+				  size_t length)
+{
+	int ret;
+
+	ret = drm_colorop_init(dev, colorop, plane, DRM_COLOROP_1D_LUT);
+	if (ret)
+		return ret;
+
+	ret = drm_colorop_lutcaps_init(colorop, plane, ranges, length);
+	if (ret)
+		return ret;
+
+	/* data */
+	ret = drm_colorop_create_data_prop(dev, colorop);
+	if (ret)
+		return ret;
+
+	return 0;
+}
+EXPORT_SYMBOL(drm_colorop_curve_1d_lut_init);
+
 int drm_colorop_ctm_3x4_init(struct drm_device *dev, struct drm_colorop *colorop,
 			     struct drm_plane *plane)
 {
@@ -343,7 +367,8 @@ EXPORT_SYMBOL(drm_colorop_reset);
 
 static const char * const colorop_type_name[] = {
 	[DRM_COLOROP_1D_CURVE] = "1D Curve",
-	[DRM_COLOROP_CTM_3X4] = "3x4 Matrix"
+	[DRM_COLOROP_CTM_3X4] = "3x4 Matrix",
+	[DRM_COLOROP_1D_LUT] = "1D Curve Custom LUT"
 };
 
 /**
