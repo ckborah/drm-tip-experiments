@@ -409,12 +409,22 @@ hsw_dp_audio_config_update(struct intel_encoder *encoder,
 	tmp |= AUD_CONFIG_N_VALUE_INDEX;
 
 	if (nm) {
+		unsigned n = nm->n;
+
+		if (intel_crtc_has_type(crtc_state, INTEL_OUTPUT_DP_MST)) {
+			n = 0x8000;
+			drm_dbg_kms(&i915->drm, "overwrite Naud to %u\n", n);
+		}
+
 		tmp &= ~AUD_CONFIG_N_MASK;
-		tmp |= AUD_CONFIG_N(nm->n);
+		tmp |= AUD_CONFIG_N(n);
 		tmp |= AUD_CONFIG_N_PROG_ENABLE;
 	}
 
 	intel_de_write(i915, HSW_AUD_CFG(cpu_transcoder), tmp);
+
+	if (intel_crtc_has_type(crtc_state, INTEL_OUTPUT_DP_MST))
+		return;
 
 	tmp = intel_de_read(i915, HSW_AUD_M_CTS_ENABLE(cpu_transcoder));
 	tmp &= ~AUD_CONFIG_M_MASK;
