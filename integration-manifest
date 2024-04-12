@@ -1,0 +1,30 @@
+drm drm-fixes 3b0daecfeac0103aba8b293df07a0cbaf8b43f29
+	amdkfd: use calloc instead of kzalloc to avoid integer overflow
+drm-misc drm-misc-fixes 4c08f01934ab67d1d283d5cbaa52b923abcfe4cd
+	drm/vmwgfx: Enable DMA mappings with SEV
+drm-intel drm-intel-fixes dcd8992e47f13afb5c11a61e8d9c141c35e23751
+	drm/i915/vrr: Disable VRR when using bigjoiner
+drm-xe drm-xe-fixes f76646c83f028c62853c23dac49204232e903597
+	drm/xe: Label RING_CONTEXT_CONTROL as masked
+drm drm-next 6e1f415e7129f7cd4c2394af83b35cdcdd40baf7
+	Merge tag 'drm-misc-next-2024-04-10' of https://gitlab.freedesktop.org/drm/misc/kernel into drm-next
+drm-misc drm-misc-next-fixes 5d4e8ae6e57b025802aadf55a4775c55cceb75f1
+	nouveau/gsp: don't check devinit disable on GSP.
+drm-intel drm-intel-next-fixes 84b5ece64477df4394d362d494a2496bf0878985
+	drm/i915: Drop -Wstringop-overflow
+drm-xe drm-xe-next-fixes 4cece764965020c22cff7665b18a012006359095
+	Linux 6.9-rc1
+drm-misc drm-misc-next 42118c5f6853a28c132ab1ae6efe3893b051e0d2
+	drm/i915: Add SIZE_HINTS property for cursors
+drm-intel drm-intel-next 578ff98403cef6284430934616bc4debf3017d0f
+	drm/i915: Allow bigjoiner for MST
+drm-intel drm-intel-gt-next 3563d855312acedcd445a3767f0cb07906f1c26f
+	drm/i915/guc: Fix the fix for reset lock confusion
+drm-xe drm-xe-next 4209d635a823619038db0bf72e86a223f4186634
+	drm/xe: Remove devcoredump during driver release
+drm-intel topic/core-for-CI 44909e5ed2f8e95a9a8576f44d570c68c76c44d6
+	ASoC: SOF: Core: Add remove_late() to  sof_init_environment failure path
+drm-xe topic/xe-for-CI ddb9be6feae2523fd4069482e44729e211f34219
+	drm/xe/huc: Define LNL HuC
+drm-intel topic/thunderbolt-next b8a730836c6b1788ca2fbd6bcc2ac99e97ef7de9
+	thunderbolt: Constify the struct device_type usage
