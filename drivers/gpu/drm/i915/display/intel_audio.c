@@ -397,10 +397,11 @@ hsw_dp_audio_config_update(struct intel_encoder *encoder,
 	rate = acomp ? acomp->aud_sample_rate[port] : 0;
 	nm = audio_config_dp_get_n_m(crtc_state, rate);
 	if (nm)
-		drm_dbg_kms(&i915->drm, "using Maud %u, Naud %u\n", nm->m,
-			    nm->n);
+		drm_dbg_kms(&i915->drm, "[ENCODER:%d:%s] using Maud %u, Naud %u\n", encoder->base.base.id,
+			    encoder->base.name, nm->m, nm->n);
 	else
-		drm_dbg_kms(&i915->drm, "using automatic Maud, Naud\n");
+		drm_dbg_kms(&i915->drm, "[ENCODER:%d:%s] using automatic Maud, Naud\n", encoder->base.base.id,
+			    encoder->base.name);
 
 	tmp = intel_de_read(i915, HSW_AUD_CFG(cpu_transcoder));
 	tmp &= ~AUD_CONFIG_N_VALUE_INDEX;
