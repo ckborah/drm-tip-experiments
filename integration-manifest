@@ -1,0 +1,31 @@
+drm drm-fixes dd5a440a31fae6e459c0d6271dddd62825505361
+	Linux 6.9-rc7
+drm-misc drm-misc-fixes 6897204ea3df808d342c8e4613135728bc538bcd
+	drm/connector: Add 
+ to message about demoting connector force-probes
+drm-intel drm-intel-fixes 43b26bdd2ee5cfca80939be910d5b23a50cd7f9d
+	drm/i915/bios: Fix parsing backlight BDB data
+drm-xe drm-xe-fixes dd5a440a31fae6e459c0d6271dddd62825505361
+	Linux 6.9-rc7
+drm drm-next f03eee5fc922158654405318a02db9982c0ddf07
+	Merge tag 'drm-xe-next-fixes-2024-05-02' of https://gitlab.freedesktop.org/drm/xe/kernel into drm-next
+drm-misc drm-misc-next-fixes be3f3042391d061cfca2bd22630e0d101acea5fc
+	drm: zynqmp_dpsub: Always register bridge
+drm-intel drm-intel-next-fixes 84b5ece64477df4394d362d494a2496bf0878985
+	drm/i915: Drop -Wstringop-overflow
+drm-xe drm-xe-next-fixes 3bc8848bb7f7478e6806e4522b06b63f40a53e1e
+	drm/xe: Merge 16021540221 and 18034896535 WAs
+drm-misc drm-misc-next ef283674a17e000bb6b2ff05dd2ac5cbf2e3ae0d
+	drm/uapi: Move drm_color_ctm_3x4 out from drm_mode.h
+drm-intel drm-intel-next c06387ab4472fc5af857d02323fc1073ff7923e0
+	drm/i915: pass dev_priv explicitly to PORT_DFT2_G4X
+drm-intel drm-intel-gt-next 749670a58d935303ad1ce529acc73f12de25832e
+	Revert "drm/i915: Remove extra multi-gt pm-references"
+drm-xe drm-xe-next ee7284230644e21fef0e38fc5bf8f907b6bb7f7c
+	drm/xe/ads: Use flexible-array
+drm-intel topic/core-for-CI 44909e5ed2f8e95a9a8576f44d570c68c76c44d6
+	ASoC: SOF: Core: Add remove_late() to  sof_init_environment failure path
+drm-xe topic/xe-for-CI bf4d297181f6ce757299a6853620435de76b09d4
+	drm/xe/gsc: define GSC FW for LNL
+drm-intel topic/thunderbolt-next b8a730836c6b1788ca2fbd6bcc2ac99e97ef7de9
+	thunderbolt: Constify the struct device_type usage
