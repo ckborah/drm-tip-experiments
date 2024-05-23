@@ -5270,7 +5270,9 @@ intel_pipe_config_compare(const struct intel_crtc_state *current_config,
 	PIPE_CONF_CHECK_BOOL(hdmi_high_tmds_clock_ratio);
 	PIPE_CONF_CHECK_BOOL(has_infoframe);
 	PIPE_CONF_CHECK_BOOL(enhanced_framing);
-	PIPE_CONF_CHECK_BOOL(fec_enable);
+
+	if(!intel_dp_is_uhbr(pipe_config))
+		PIPE_CONF_CHECK_BOOL(fec_enable);
 
 	if (!fastset) {
 		PIPE_CONF_CHECK_BOOL(has_audio);

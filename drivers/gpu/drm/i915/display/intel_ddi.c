@@ -2299,7 +2299,7 @@ static void intel_ddi_enable_fec(struct intel_encoder *encoder,
 {
 	struct drm_i915_private *dev_priv = to_i915(encoder->base.dev);
 
-	if (!crtc_state->fec_enable)
+	if (!crtc_state->fec_enable || intel_dp_is_uhbr(crtc_state))
 		return;
 
 	intel_de_rmw(dev_priv, dp_tp_ctl_reg(encoder, crtc_state),
