@@ -4379,6 +4379,17 @@ static const struct drm_color_lut_range xelpd_gamma_hdr[] = {
 	},
 };
 
+struct drm_mode_3dlut_mode lut3d_modes[] = {
+	{
+		.lut_size = 17,
+		.lut_stride = {17, 17, 17},
+		.interpolation = DRM_COLOROP_LUT3D_INTERPOLATION_TETRAHEDRAL,
+		.color_depth = 10,
+		.color_format = DRM_FORMAT_XRGB16161616,
+		.traversal_order = DRM_COLOROP_LUT3D_TRAVERSAL_RGB,
+	},
+};
+
 /* TODO: Move to another file */
 struct intel_plane_colorop *intel_colorop_alloc(void)
 {
@@ -4503,6 +4514,17 @@ int intel_plane_tf_pipeline_init(struct drm_plane *plane, struct drm_prop_enum_l
 		return ret;
 
 	drm_colorop_set_next_property(prev_op, &colorop->base);
+
+	prev_op = &colorop->base;
+
+	colorop = intel_plane_colorop_create(CB_PLANE_3DLUT);
+	ret = drm_colorop_3dlut_init(dev, &colorop->base, plane,
+				     lut3d_modes, ARRAY_SIZE(lut3d_modes), true);
+	if (ret)
+		return ret;
+
+	drm_colorop_set_next_property(prev_op, &colorop->base);
+
 
 	return 0;
 }

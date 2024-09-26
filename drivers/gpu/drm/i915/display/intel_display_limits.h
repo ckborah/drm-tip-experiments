@@ -147,6 +147,7 @@ enum intel_color_block {
 	CB_PLANE_PRE_CSC_LUT,
 	CB_PLANE_CSC,
 	CB_PLANE_POST_CSC_LUT,
+	CB_PLANE_3DLUT,
 
 	I915_MAX_CB
 };
