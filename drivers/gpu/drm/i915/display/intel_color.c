@@ -1139,6 +1139,35 @@ static void skl_color_commit_arm(struct intel_dsb *dsb,
 	intel_de_write_dsb(display, dsb, PIPE_CSC_MODE(crtc->pipe), crtc_state->csc_mode);
 }
 
+/* TODO: change to struct intel_display*/
+static bool intel_crtc_has_lut_3d(struct intel_crtc *crtc)
+{
+        struct drm_i915_private *i915 = to_i915(crtc->base.dev);
+        enum pipe pipe = crtc->pipe;
+        if (DISPLAY_VER(i915) >= 12)
+                return pipe == PIPE_A || pipe == PIPE_B;
+        else if (DISPLAY_VER(i915) >= 10 || IS_GEMINILAKE(i915))
+                return pipe == PIPE_A;
+        else
+                return false;
+}
+
+static void glk_lut_3d_commit(const struct intel_crtc_state *crtc_state)
+{
+	struct intel_crtc *crtc = to_intel_crtc(crtc_state->uapi.crtc);
+	struct drm_i915_private *dev_priv = to_i915(crtc->base.dev);
+	enum pipe pipe = crtc->pipe;
+	u32 val;
+	WARN_ON(intel_de_read(dev_priv, LUT_3D_CTL(pipe)) & LUT_3D_READY);
+	/* Enable by default */
+	if(1)
+	/* if (crtc_state->hw.gamma_lut_3d) */
+		val = LUT_3D_ENABLE | LUT_3D_READY;
+	else
+		val = 0;
+	intel_de_write(dev_priv, LUT_3D_CTL(pipe), val);
+}
+
 static void icl_color_commit_arm(struct intel_dsb *dsb,
 				 const struct intel_crtc_state *crtc_state)
 {
@@ -1146,6 +1175,8 @@ static void icl_color_commit_arm(struct intel_dsb *dsb,
 	struct intel_crtc *crtc = to_intel_crtc(crtc_state->uapi.crtc);
 	enum pipe pipe = crtc->pipe;
 
+	if (intel_crtc_has_lut_3d(crtc))
+		glk_lut_3d_commit(crtc_state);
 	/*
 	 * We don't (yet) allow userspace to control the pipe background color,
 	 * so force it to black.
@@ -4385,7 +4416,7 @@ struct drm_mode_3dlut_mode lut3d_modes[] = {
 		.lut_stride = {17, 17, 17},
 		.interpolation = DRM_COLOROP_LUT3D_INTERPOLATION_TETRAHEDRAL,
 		.color_depth = 10,
-		.color_format = DRM_FORMAT_XRGB16161616,
+		.color_format = DRM_FORMAT_XRGB2101010,
 		.traversal_order = DRM_COLOROP_LUT3D_TRAVERSAL_RGB,
 	},
 };
@@ -4429,6 +4460,20 @@ struct intel_plane_colorop *intel_plane_colorop_create(enum intel_color_block id
 	return colorop;
 }
 
+static void glk_load_lut_3d(struct intel_crtc *crtc,
+			    const struct drm_property_blob *blob)
+{
+	struct drm_i915_private *dev_priv = to_i915(crtc->base.dev);
+	const struct drm_color_lut *lut = blob->data;
+	int i, lut_size = drm_color_lut_size(blob);
+	enum pipe pipe = crtc->pipe;
+	WARN_ON(intel_de_read(dev_priv, LUT_3D_CTL(pipe)) & LUT_3D_READY);
+	intel_de_write(dev_priv, LUT_3D_INDEX(pipe), LUT_3D_AUTO_INCREMENT);
+	for (i = 0; i < lut_size; i++)
+		intel_de_write(dev_priv, LUT_3D_DATA(pipe), ilk_lut_10(&lut[i]));
+	intel_de_write(dev_priv, LUT_3D_INDEX(pipe), 0);
+}
+
 static void apply_colorop(const struct drm_plane_state *plane_state,
 			  struct drm_colorop *colorop,
 			  u32 *plane_color_ctl)
@@ -4449,6 +4494,8 @@ static void apply_colorop(const struct drm_plane_state *plane_state,
 			(*plane_color_ctl) &= ~PLANE_COLOR_PLANE_GAMMA_DISABLE;
 			intel_color_load_plane_luts(plane_state, state->data, false);
 		}
+	} else if (colorop->type == DRM_COLOROP_3D_LUT) {
+		glk_load_lut_3d(to_intel_crtc(plane_state->crtc), state->data);		
 	}
 }
 
@@ -4516,7 +4563,7 @@ int intel_plane_tf_pipeline_init(struct drm_plane *plane, struct drm_prop_enum_l
 	drm_colorop_set_next_property(prev_op, &colorop->base);
 
 	prev_op = &colorop->base;
-
+	/* TODO: Move before POST CSC */
 	colorop = intel_plane_colorop_create(CB_PLANE_3DLUT);
 	ret = drm_colorop_3dlut_init(dev, &colorop->base, plane,
 				     lut3d_modes, ARRAY_SIZE(lut3d_modes), true);
