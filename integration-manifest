@@ -1,0 +1,28 @@
+drm drm-fixes adc218676eef25575469234709c2d87185ca223a
+	Linux 6.12
+drm-misc drm-misc-fixes 78ac1c3558810486d90aa533b0039aa70487a3da
+	dma-buf: fix dma_fence_array_signaled v4
+drm-intel drm-intel-fixes adc218676eef25575469234709c2d87185ca223a
+	Linux 6.12
+drm-xe drm-xe-fixes adc218676eef25575469234709c2d87185ca223a
+	Linux 6.12
+drm drm-next a163b895077861598be48c1cf7f4a88413c28b22
+	Merge tag 'drm-xe-next-fixes-2024-11-15' of https://gitlab.freedesktop.org/drm/xe/kernel into drm-next
+drm-misc drm-misc-next-fixes 818956c76517e127fad8cf02cd29866e0a852072
+	drm/rockchip: avoid 64-bit division
+drm-intel drm-intel-next-fixes 376a33c4a0d8344bb575e1a6eeb748ee4d4675d3
+	drm/i915/hdcp: Fix when the first read and write are retried
+drm-xe drm-xe-next-fixes ed31ba0aa7e93ecac62cfd445c3228345bdd87e6
+	drm/xe: Mark preempt fence workqueue as reclaim
+drm-misc drm-misc-next c1bae6802ee9c8ad8e3c1df7ca3174d6b4b260e5
+	drm/panel-edp: Add unknown BOE panel for HP Omnibook X14
+drm-intel drm-intel-next ad4adad7c69a071e7a35ad6ca2c5b24c4f0f0083
+	drm/i915/ddi: clarify intel_ddi_connector_get_hw_state() for DP MST
+drm-intel drm-intel-gt-next b939a08bc378a7c716ad7a9486b48794b95d22f5
+	drm/i915/guc: Flush ct receive tasklet during reset preparation
+drm-xe drm-xe-next 4fe70f664a105391321c85b2af241001e8118d24
+	drm/xe: Update xe2_graphics name string
+drm-intel topic/core-for-CI c63b2aff736fc2bdfb22ddd7520a1022f0936b55
+	cpufreq: intel_pstate: Rearrange locking in hybrid_init_cpu_capacity_scaling()
+drm-xe topic/xe-for-CI d77237d345ac4fdce6558605acb84aa7a76dc9a1
+	drm/xe/ptl: Define HuC FW version for PTL
