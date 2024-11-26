@@ -472,7 +472,7 @@ int intel_display_driver_probe_nogem(struct drm_i915_private *i915)
 	intel_acpi_assign_connector_fwnodes(display);
 	drm_modeset_unlock_all(dev);
 
-	intel_initial_plane_config(i915);
+	intel_initial_plane_config(display);
 
 	/*
 	 * Make sure hardware watermarks really match the state we read out.
@@ -518,7 +518,7 @@ int intel_display_driver_probe(struct drm_i915_private *i915)
 	if (ret)
 		drm_dbg_kms(&i915->drm, "Initial modeset failed, %d\n", ret);
 
-	intel_overlay_setup(i915);
+	intel_overlay_setup(display);
 
 	/* Only enable hotplug handling once the fbdev is fully set up. */
 	intel_hpd_init(i915);
@@ -607,7 +607,7 @@ void intel_display_driver_remove_noirq(struct drm_i915_private *i915)
 
 	intel_dp_tunnel_mgr_cleanup(display);
 
-	intel_overlay_cleanup(i915);
+	intel_overlay_cleanup(display);
 
 	intel_gmbus_teardown(display);
 
@@ -676,6 +676,9 @@ int intel_display_driver_suspend(struct drm_i915_private *i915)
 			ret);
 	else
 		i915->display.restore.modeset_state = state;
+
+	intel_dp_mst_suspend(i915);
+
 	return ret;
 }
 
@@ -728,6 +731,9 @@ void intel_display_driver_resume(struct drm_i915_private *i915)
 
 	if (!HAS_DISPLAY(i915))
 		return;
+
+	/* MST sideband requires HPD interrupts enabled */
+	intel_dp_mst_resume(i915);
 
 	i915->display.restore.modeset_state = NULL;
 	if (state)
